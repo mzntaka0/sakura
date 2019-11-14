@@ -16,10 +16,14 @@ conda install -c jcadic iyo_core
 
 ## Train
 Start the training with:
-```python main.py --arch MobileNetV2 --lr=0.01 --epochs 350```
+```
+python main.py --arch MobileNetV2 --lr=0.01 --epochs 350
+```
 
 Resume the training with:
-```python main.py --resume --arch MobileNetV2 --lr=0.01 --epochs 350```
+```
+python main.py --resume --arch MobileNetV2 --lr=0.01 --epochs 350
+```
 
 
 ## Accuracy
