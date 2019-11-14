@@ -95,7 +95,7 @@ class Tester:
                 self.start_epoch = checkpoint['epoch']
                 self.test(self.start_epoch)
             else:
-                print("{},{} | Waiting for a new model to be updated...".format(self.start_epoch, self.best_acc))
+                # print("{},{} | Waiting for a new model to be updated...".format(self.start_epoch, self.best_acc))
                 time.sleep(1)
 
 if __name__ == "__main__":
