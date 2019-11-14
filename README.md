@@ -11,7 +11,7 @@ I'm playing with [Iyo](http://iyo.ai/) on the CIFAR10 dataset.
 ## Setup
 ```
 conda install -c pytorch torchvision
-conda install -c jcadic iyo
+conda install -c jcadic iyo_core
 ```
 
 ## Accuracy
