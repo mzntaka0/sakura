@@ -2,7 +2,7 @@
 
 # Fast training on CIFAR10 with Iyo
 
-Fast asynchronous training with (no delay for evaluation) [Iyo](http://iyo.ai/) on the CIFAR10 dataset.
+Fast asynchronous training (time in evaluation is saved) with [Iyo](http://iyo.ai/) on the CIFAR10 dataset.
 
 ## Prerequisites
 - Python 3.6
