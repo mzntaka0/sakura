@@ -1,4 +1,4 @@
-![alt text](https://raw.githubusercontent.com/username/projectname/branch/path/to/img/cifar.jpg)
+![alt text](https://raw.githubusercontent.com/JeanMaximilienCadic/CIFAR10-Iyo/master/img/cifar.jpg)
 
 # Fast training on CIFAR10 with Iyo
 
