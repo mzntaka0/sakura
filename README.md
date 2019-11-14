@@ -14,6 +14,11 @@ conda install -c pytorch torchvision
 conda install -c jcadic iyo_core
 ```
 
+## Setup
+Start the training with ```python main.py --arch MobileNetV2 --lr=0.01 --epochs 350```
+Resume the training with ```python main.py --resume --arch MobileNetV2 --lr=0.01 --epochs 350```
+
+
 ## Accuracy
 | Model             | Acc.        |
 | ----------------- | ----------- |
@@ -28,4 +33,3 @@ conda install -c jcadic iyo_core
 | [PreActResNet18](https://arxiv.org/abs/1603.05027)    | 95.11%      |
 | [DPN92](https://arxiv.org/abs/1707.01629)             | 95.16%      |
 
-Resume the training with `python main.py --resume --arch MobileNetV2 --lr=0.01 --epochs 350`
