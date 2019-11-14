@@ -33,7 +33,7 @@ class Trainer:
         ])
 
         trainset = torchvision.datasets.CIFAR10(root='./data', train=True, download=True, transform=transform_train)
-        trainloader = torch.utils.data.DataLoader(trainset, batch_size=128 * 5, shuffle=True, num_workers=2)
+        trainloader = torch.utils.data.DataLoader(trainset, batch_size=200, shuffle=True, num_workers=2)
 
         classes = ('plane', 'car', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck')
 
