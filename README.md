@@ -14,7 +14,7 @@ conda install -c pytorch torchvision
 conda install -c jcadic iyo_core
 ```
 
-## Setup
+## Train
 Start the training with:
 ```python main.py --arch MobileNetV2 --lr=0.01 --epochs 350```
 
