@@ -50,9 +50,9 @@ class Trainer:
             print('==> Resuming from best checkpoint..')
             assert os.path.isdir('checkpoint'), 'Error: no checkpoint directory found!'
             try:
-                checkpoint = torch.load('./checkpoint/ckpt.pth')
+                checkpoint = torch.load('{model_dir}/ckpt.pth'.format(model_dir=self.model_dir))
             except:
-                checkpoint = torch.load('./checkpoint/ckpt_train.pth')
+                checkpoint = torch.load('{model_dir}/ckpt_train.pth'.format(model_dir=self.model_dir))
             net.load_state_dict(checkpoint['net'])
             self.start_epoch = checkpoint['epoch']
 
