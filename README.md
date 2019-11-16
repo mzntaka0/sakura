@@ -13,6 +13,7 @@ Fast asynchronous training (time in evaluation is saved) with [Iyo](http://iyo.a
 ==> Loading training data..
 ==> Building training model..
 
+```
 0/10 | Lr: 1.0000E-01 | Loss: None | Acc: None(93.9): 100%|███████| 391/391 [00:35<00:00, 11.10it/s]
 
 1/10 | Lr: 1.0000E-01 | Loss: 1.39E-02 | Acc: 34.662(93.9): 100%|███████| 391/391 [00:30<00:00, 13.02it/s]
@@ -32,7 +33,7 @@ Fast asynchronous training (time in evaluation is saved) with [Iyo](http://iyo.a
 8/10 | Lr: 1.0000E-01 | Loss: 5.01E-03 | Acc: 77.948(93.9): 100%|███████| 391/391 [00:30<00:00, 12.98it/s]
 
 9/10 | Lr: 1.0000E-01 | Loss: 4.91E-03 | Acc: 78.282(93.9): 100%|███████| 391/391 [00:30<00:00, 12.99it/s]
-
+```
 Total over 10 epochs: 0:05:09.459543
 
 ### Original version
