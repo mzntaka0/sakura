@@ -1,6 +1,6 @@
 ![alt text](https://raw.githubusercontent.com/JeanMaximilienCadic/CIFAR10-Iyo/master/img/cifar.jpg)
 
-# Fast training on CIFAR10 with Iyo
+# Fast training on CIFAR10 with IYO
 
 Fast asynchronous training (time in evaluation is saved) with [Iyo](http://iyo.ai/) on the CIFAR10 dataset.
 248
@@ -92,8 +92,6 @@ Epoch: 9
 Total over 10 epochs: 0:06:46.550089
 
 
-
-
 ## Setup
 ```
 conda install -c pytorch torchvision
@@ -111,7 +109,6 @@ Resume the training with:
 python main.py --resume --arch MobileNetV2 --lr=0.01 --epochs 350
 ```
 
-
 ## Accuracy
 | Model             | Acc.        |
 | ----------------- | ----------- |
@@ -126,3 +123,5 @@ python main.py --resume --arch MobileNetV2 --lr=0.01 --epochs 350
 | [PreActResNet18](https://arxiv.org/abs/1603.05027)    | 95.11%      |
 | [DPN92](https://arxiv.org/abs/1707.01629)             | 95.16%      |
 
+## Contact
+For any question please contact me at j.cadic@9dw-lab.jp
