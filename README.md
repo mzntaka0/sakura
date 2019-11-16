@@ -48,6 +48,7 @@ Epoch: 0
 Saving..
 
 Epoch: 1
+
 [==== 391/391 ====>]  Step: 118ms | Tot: 35s773ms | Loss: 1.579 | Acc: 42.098%
 
 [==== 100/100 ====>]  Step: 43ms | Tot: 4s47ms | Loss: 1.401 | Acc: 49.180%
@@ -55,49 +56,58 @@ Epoch: 1
 Saving..
 
 Epoch: 2
- [==== 391/391 ====>]  Step: 89ms | Tot: 35s796ms | Loss: 1.397 | Acc: 49.568%
+
+[==== 391/391 ====>]  Step: 89ms | Tot: 35s796ms | Loss: 1.397 | Acc: 49.568%
 
 [==== 100/100 ====>]  Step: 47ms | Tot: 4s45ms | Loss: 1.249 | Acc: 55.580%
- Saving..
+Saving..
 
 Epoch: 3
- [==== 391/391 ====>]  Step: 94ms | Tot: 35s29ms | Loss: 1.244 | Acc: 55.548%
+
+[==== 391/391 ====>]  Step: 94ms | Tot: 35s29ms | Loss: 1.244 | Acc: 55.548%
 
 [==== 100/100 ====>]  Step: 43ms | Tot: 4s135ms | Loss: 1.139 | Acc: 58.960%
- Saving..
+Saving..
 
 Epoch: 4
- [==== 391/391 ====>]  Step: 101ms | Tot: 35s723ms | Loss: 1.148 | Acc: 59.194%
+
+[==== 391/391 ====>]  Step: 101ms | Tot: 35s723ms | Loss: 1.148 | Acc: 59.194%
 
 [==== 100/100 ====>]  Step: 40ms | Tot: 4s91ms | Loss: 1.034 | Acc: 63.060%
- Saving..
+
+Saving..
 
 Epoch: 5
- [==== 391/391 ====>]  Step: 101ms | Tot: 35s650ms | Loss: 1.084 | Acc: 61.418%
+
+[==== 391/391 ====>]  Step: 101ms | Tot: 35s650ms | Loss: 1.084 | Acc: 61.418%
 
 [==== 100/100 ====>]  Step: 41ms | Tot: 4s67ms | Loss: 1.050 | Acc: 63.380%
- Saving..
+Saving..
 
 Epoch: 6
- [==== 391/391 ====>]  Step: 99ms | Tot: 35s613ms | Loss: 1.013 | Acc: 64.106%
+
+[==== 391/391 ====>]  Step: 99ms | Tot: 35s613ms | Loss: 1.013 | Acc: 64.106%
 
 [==== 100/100 ====>]  Step: 36ms | Tot: 4s69ms | Loss: 0.940 | Acc: 66.960%
- Saving..
+Saving..
 
 Epoch: 7
- [==== 391/391 ====>]  Step: 97ms | Tot: 35s583ms | Loss: 0.948 | Acc: 66.568%
+
+[==== 391/391 ====>]  Step: 97ms | Tot: 35s583ms | Loss: 0.948 | Acc: 66.568%
 
 [==== 100/100 ====>]  Step: 41ms | Tot: 4s65ms | Loss: 0.925 | Acc: 67.540%
- Saving..
+Saving..
 
 Epoch: 8
- [==== 391/391 ====>]  Step: 93ms | Tot: 35s508ms | Loss: 0.909 | Acc: 68.308%  
+
+[==== 391/391 ====>]  Step: 93ms | Tot: 35s508ms | Loss: 0.909 | Acc: 68.308%  
 
 [==== 100/100 ====>]  Step: 38ms | Tot: 4s11ms | Loss: 0.890 | Acc: 69.220%
- Saving..
+Saving..
 
 Epoch: 9
- [==== 391/391 ====>]  Step: 106ms | Tot: 35s602ms | Loss: 0.886 | Acc: 69.102%            
+
+[==== 391/391 ====>]  Step: 106ms | Tot: 35s602ms | Loss: 0.886 | Acc: 69.102%            
 
 [==== 100/100 ====>]  Step: 36ms | Tot: 4s98ms | Loss: 0.920 | Acc: 67.950%                                                                      
 0:06:46.550089
