@@ -1,4 +1,4 @@
-'''Train CIFAR10 with PyTorch.'''
+'''Train CIFAR10 with PyTorch and Iyo'''
 import torch.optim as optim
 import torch.backends.cudnn as cudnn
 import torchvision
@@ -14,10 +14,12 @@ from models import *
 from tqdm import tqdm
 from decimal import Decimal
 import multiprocessing as mp
+from iyo.core.nn import trainers as tr
 
 
-class Trainer:
+class Trainer(tr.Trainer):
     def __init__(self, args, mode="train"):
+        super(Trainer, self).__init__(args=args, mode=mode)
         assert mode in ["train", "test"]
         self.args = args
         self.mode=mode
@@ -53,13 +55,13 @@ class Trainer:
             ])
 
             dataset = torchvision.datasets.CIFAR10(root='./data', train=True, download=True, transform=transform_train)
-            loader = torch.utils.data.DataLoader(dataset, batch_size=128*5, shuffle=False, num_workers=mp.cpu_count())
+            self.loader = torch.utils.data.DataLoader(dataset, batch_size=128*5, shuffle=False, num_workers=mp.cpu_count())
             # Model
             print('==> Building training model..')
-            net = eval(self.args.arch)()
-            net = net.to(device)
+            self.net = eval(self.args.arch)()
+            self.net = self.net.to(device)
             if device == 'cuda':
-                net = torch.nn.DataParallel(net)
+                self.net = torch.nn.DataParallel(self.net)
                 cudnn.benchmark = True
         elif self.mode=="test":
             print('==> Loading testing data..')
@@ -69,22 +71,19 @@ class Trainer:
             ])
 
             dataset = torchvision.datasets.CIFAR10(root='./data', train=False, download=False, transform=transform_test)
-            loader = torch.utils.data.DataLoader(dataset, batch_size=100, shuffle=False,  num_workers=mp.cpu_count())
+            self.loader = torch.utils.data.DataLoader(dataset, batch_size=100, shuffle=False,  num_workers=mp.cpu_count())
             # Model
             print('==> Building testing model..')
-            net = eval(self.args.arch)()
-            net = net.to(device)
+            self.net = eval(self.args.arch)()
+            self.net = self.net.to(device)
             if device == 'cuda':
-                net = torch.nn.DataParallel(net)
+                self.net = torch.nn.DataParallel(self.net)
                 cudnn.benchmark = True
-
 
         # Optimizer
         criterion = nn.CrossEntropyLoss()
-        optimizer = optim.SGD(net.parameters(), lr=self.args.lr, momentum=0.9, weight_decay=5e-4)
+        optimizer = optim.SGD(self.net.parameters(), lr=self.args.lr, momentum=0.9, weight_decay=5e-4)
 
-        self.net = net
-        self.loader = loader
         self.optimizer = optimizer
         self.device = device
         self.criterion = criterion
@@ -114,14 +113,12 @@ class Trainer:
 
         self.__run__()
 
-
     def adjust_learning_rate(self, epoch):
         """Sets the learning rate to the initial LR decayed by 10 every 30 epochs"""
         lr = self.args.lr * (self.init_lr ** (epoch // 30))
         for param_group in self.optimizer.param_groups:
             param_group['lr'] = lr
 
-    # Training
     @synchronize
     def train(self):
         def train_batch(batch_idx, inputs, targets):
@@ -188,7 +185,6 @@ class Trainer:
         self.acc = np.mean(accs)
         self.loss = self.train_loss / self.total
 
-
     @synchronize
     def test(self):
         self.net.eval()
@@ -212,31 +208,7 @@ class Trainer:
             self.lu = self.epoch
         self.loss = test_loss/total
 
-    def __run__(self):
-        if self.mode == "train":
-            for self.epoch in range(self.start_epoch, self.epochs):
-                self.train()
-        elif self.mode == "test":
-            try:
-                fingerprint = os.path.getmtime('{model_dir}/ckpt.pth'.format(model_dir=self.model_dir))
-                self.state = AsyncSaver(self.model_path).get()
-                assert self.state['epoch.test'] + 1 < self.epochs
-                self.net.load_state_dict(self.state['net.train'])
-                self.epoch = self.state['epoch.train']
-                self.test()
-                while True:
-                    # Restart from train point
-                    _fingerprint = os.path.getmtime('{model_dir}/ckpt.pth'.format(model_dir=self.model_dir))
-                    if not _fingerprint == fingerprint:
-                        fingerprint = _fingerprint
-                        self.state = AsyncSaver(self.model_path).get()
-                        assert self.state['epoch.train'] + 1 < self.epochs
-                        self.net.load_state_dict(self.state['net.train'])
-                        self.epoch = self.state['epoch.train']
-                        self.test()
-                    time.sleep(1)
-            except AssertionError:
-                return
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='PyTorch CIFAR10 Training')
@@ -247,6 +219,6 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     t0 = time.time()
-    trainer = Trainer(args, mode="test")
+    trainer = Trainer(args, mode="train")
     print(datetime.timedelta(seconds=time.time()-t0))
 
