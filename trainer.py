@@ -1,70 +1,119 @@
 '''Train CIFAR10 with PyTorch.'''
 import torch.optim as optim
 import torch.backends.cudnn as cudnn
-
 import torchvision
 import torchvision.transforms as transforms
-
+import numpy as np
+import time
+import datetime
 import os
 import argparse
-
+from iyo.core.nn.modules import AsyncSaver
+from iyo.core.nn.decorators.modules import synchronize
 from models import *
 from tqdm import tqdm
 from decimal import Decimal
+import multiprocessing as mp
+
+
 class Trainer:
-    def __init__(self, args):
+    def __init__(self, args, mode="train"):
+        assert mode in ["train", "test"]
         self.args = args
+        self.mode=mode
         self.arch = self.args.arch
         self.model_dir = "./checkpoint/{arch}".format(arch=self.arch)
+        self.model_path = '{model_dir}/ckpt.pth'.format(model_dir=self.model_dir)
         self.epochs = self.args.epochs
         self.init_lr = self.args.lr
-        self.acc = None
-        self.loss = None
-        device = 'cuda' if torch.cuda.is_available() else 'cpu'
         self.start_epoch = 0
+        self.lu = None
+        self.epoch = self.start_epoch
+        self.acc = 0
+        self.loss = np.float("inf")
+        self.records = {}
+
+        self.state = {"net.{mode}".format(mode=self.mode): None,
+                      "epoch.{mode}".format(mode=self.mode): self.epoch,
+                      "acc.{mode}".format(mode=self.mode): self.acc,
+                      "loss.{mode}".format(mode=self.mode): self.loss,
+                      "lu.{mode}".format(mode=self.mode): self.lu}
+        os.makedirs(self.model_dir, exist_ok=True)
+        # Cpu/Gpu
+        device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
         # Data
-        print('==> Loading training data..')
-        transform_train = transforms.Compose([
-            transforms.RandomCrop(32, padding=4),
-            transforms.RandomHorizontalFlip(),
-            transforms.ToTensor(),
-            transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
-        ])
+        if self.mode=="train":
+            print('==> Loading training data..')
+            transform_train = transforms.Compose([
+                transforms.RandomCrop(32, padding=4),
+                transforms.RandomHorizontalFlip(),
+                transforms.ToTensor(),
+                transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
+            ])
 
-        trainset = torchvision.datasets.CIFAR10(root='./data', train=True, download=True, transform=transform_train)
-        trainloader = torch.utils.data.DataLoader(trainset, batch_size=200, shuffle=True, num_workers=2)
+            dataset = torchvision.datasets.CIFAR10(root='./data', train=True, download=True, transform=transform_train)
+            loader = torch.utils.data.DataLoader(dataset, batch_size=128*5, shuffle=False, num_workers=mp.cpu_count())
+            # Model
+            print('==> Building training model..')
+            net = eval(self.args.arch)()
+            net = net.to(device)
+            if device == 'cuda':
+                net = torch.nn.DataParallel(net)
+                cudnn.benchmark = True
+        elif self.mode=="test":
+            print('==> Loading testing data..')
+            transform_test = transforms.Compose([
+                transforms.ToTensor(),
+                transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
+            ])
 
-        classes = ('plane', 'car', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck')
+            dataset = torchvision.datasets.CIFAR10(root='./data', train=False, download=False, transform=transform_test)
+            loader = torch.utils.data.DataLoader(dataset, batch_size=100, shuffle=False,  num_workers=mp.cpu_count())
+            # Model
+            print('==> Building testing model..')
+            net = eval(self.args.arch)()
+            net = net.to(device)
+            if device == 'cuda':
+                net = torch.nn.DataParallel(net)
+                cudnn.benchmark = True
 
-        # Model
-        print('==> Building training model..')
-        net = eval(self.args.arch)()
-        net = net.to(device)
-        if device == 'cuda':
-            net = torch.nn.DataParallel(net)
-            cudnn.benchmark = True
 
-        if self.args.resume:
-            # Load checkpoint.
-            print('==> Resuming from best checkpoint..')
-            assert os.path.isdir('checkpoint'), 'Error: no checkpoint directory found!'
-            try:
-                checkpoint = torch.load('{model_dir}/ckpt.pth'.format(model_dir=self.model_dir))
-            except:
-                checkpoint = torch.load('{model_dir}/ckpt_train.pth'.format(model_dir=self.model_dir))
-            net.load_state_dict(checkpoint['net'])
-            self.start_epoch = checkpoint['epoch']
-
+        # Optimizer
         criterion = nn.CrossEntropyLoss()
         optimizer = optim.SGD(net.parameters(), lr=self.args.lr, momentum=0.9, weight_decay=5e-4)
 
         self.net = net
-        self.loader = trainloader
+        self.loader = loader
         self.optimizer = optimizer
         self.device = device
         self.criterion = criterion
-        self.run()
+        self.skipped=0
+        self.train_loss = 0
+        self.correct = 0
+        self.total = 0
+
+        # Resume
+        if args.resume & os.path.exists(self.model_path):
+            self.state = AsyncSaver(self.model_path).get()
+            if "net.test" in self.state:
+                self.net.load_state_dict(self.state['net.test'])
+                self.acc = self.state["acc.test"]
+                self.loss = self.state["loss.test"]
+                self.start_epoch = self.state["epoch.test"]
+                self.epoch = self.state["epoch.test"]
+                self.lu = self.state["lu.test"]
+            elif "net.{mode}".format(mode=self.mode) in self.state:
+                self.net.load_state_dict(self.state['net.{mode}'.format(mode=self.mode)])
+                self.acc = self.state["acc.{mode}".format(mode=self.mode)]
+                self.loss = self.state["loss.{mode}".format(mode=self.mode)]
+                self.start_epoch = self.state["epoch.{mode}".format(mode=self.mode)]
+                self.epoch = self.state["epoch.{mode}".format(mode=self.mode)]
+                self.lu = self.state["lu.{mode}".format(mode=self.mode)]
+            assert self.start_epoch < self.epochs
+
+        self.__run__()
+
 
     def adjust_learning_rate(self, epoch):
         """Sets the learning rate to the initial LR decayed by 10 every 30 epochs"""
@@ -73,23 +122,9 @@ class Trainer:
             param_group['lr'] = lr
 
     # Training
-    def train(self, epoch):
-        self.net.train()
-        train_loss = 0
-        correct = 0
-        total = 0
-        self.adjust_learning_rate(epoch)
-        best_acc = torch.load('{model_dir}/ckpt.pth'.format(model_dir=self.model_dir))["acc"]
-        for batch_idx, (inputs, targets) in tqdm(enumerate(self.loader),
-                                                 desc='{epoch}/{epochs} | Lr: {lr} | Loss: {loss} | '
-                                                      'Acc: {acc}({best_acc})'.format(
-                                                     epoch=epoch,
-                                                     epochs=self.epochs,
-                                                     lr='%.4E' % Decimal(self.optimizer.param_groups[0]["lr"]),
-                                                     loss='%.2E' % Decimal(self.loss) if self.loss is not None else None,
-                                                     acc=self.acc,
-                                                     best_acc=best_acc),
-                                                 total=len(self.loader)):
+    @synchronize
+    def train(self):
+        def train_batch(batch_idx, inputs, targets):
             inputs, targets = inputs.to(self.device), targets.to(self.device)
             self.optimizer.zero_grad()
             outputs = self.net(inputs)
@@ -97,34 +132,121 @@ class Trainer:
             loss.backward()
             self.optimizer.step()
 
-            train_loss += loss.item()
+            self.train_loss += loss.item()
             _, predicted = outputs.max(1)
-            total += targets.size(0)
-            correct += predicted.eq(targets).sum().item()
-        self.acc = 100. * correct / total
-        self.loss = train_loss/ total
-        # Save checkpoint.
-        state = {
-            'net': self.net.state_dict(),
-            'acc': self.acc,
-            'epoch': epoch,
-        }
-        if not os.path.isdir(self.model_dir):
-            os.mkdir(self.model_dir)
-        torch.save(state, '{model_dir}/ckpt_train.pth'.format(model_dir=self.model_dir,
-                                                              arc=self.arch))
+            correct_batch = predicted.eq(targets).sum().item()
+            batch_size = targets.size(0)
+            self.total += batch_size
+            self.correct += correct_batch
+            batch_acc = 100. * correct_batch / batch_size
+            try:
+                self.records[batch_idx][self.epoch % 3] = batch_acc
+            except:
+                self.records[batch_idx] = [batch_acc]*3
+            # print(np.mean(self.records[batch_idx]))
+            return batch_acc
+        self.net.train()
+        self.adjust_learning_rate(self.epoch)
+        skipped =0
+        N = len(self.loader)
+        accs = []
+        for batch_idx, (inputs, targets) in tqdm(enumerate(self.loader),
+                                                 desc='{epoch}/{epochs} | Lr: {lr} | LU: {lu}({lu_test}) | Loss: {loss}({loss_test}) | '
+                                                      'Skipped: {skipped} | Acc: {acc}({acc_test})'.format(
+                                                     epoch=self.epoch,
+                                                     epochs=self.epochs,
+                                                     lu = self.lu,
+                                                     lu_test=self.state["lu.test"]
+                                                     if "lu.test" in self.state else None,
+                                                     lr='%.3E' % Decimal(self.optimizer.param_groups[0]["lr"]),
+                                                     loss='%.2E' % Decimal(self.loss)
+                                                     if self.loss is not None else None,
+                                                     loss_test='%.2E' % Decimal(self.state["loss.test"])
+                                                     if "loss.test" in self.state else None,
+                                                     acc='%.2E' % Decimal(self.acc) if self.acc is not None else None,
+                                                     acc_test='%.2E' % Decimal(self.state["acc.test"])
+                                                     if "acc.test" in self.state else None,
+                                                     skipped=self.skipped if not self.epoch % 5 == 0 else "-"),
+                                                 total=N):
+
+            try:
+                assert not self.epoch % 5 == 4
+                acc_batch = np.mean(self.records[batch_idx])
+                if acc_batch < 100.0:
+                    batch_acc = train_batch(batch_idx, inputs, targets)
+                else:
+                    skipped += 1
+                    batch_acc = acc_batch
+            except:
+                self.loader.shuffle = True
+                batch_acc = train_batch(batch_idx, inputs, targets)
+            finally:
+                accs.append(batch_acc)
+
+        self.lu = self.epoch
+        self.skipped = skipped
+        self.acc = np.mean(accs)
+        self.loss = self.train_loss / self.total
 
 
-    def run(self):
-        for epoch in range(self.start_epoch, self.epochs):
-            self.train(epoch)
+    @synchronize
+    def test(self):
+        self.net.eval()
+        test_loss = 0
+        correct = 0
+        total = 0
+        with torch.no_grad():
+            for batch_idx, (inputs, targets) in enumerate(self.loader):
+                inputs, targets = inputs.to(self.device), targets.to(self.device)
+                outputs = self.net(inputs)
+                loss = self.criterion(outputs, targets)
+
+                test_loss += loss.item()
+                _, predicted = outputs.max(1)
+                total += targets.size(0)
+                correct += predicted.eq(targets).sum().item()
+
+        acc = 100. * correct / total
+        if acc > self.acc:
+            self.acc = acc
+            self.lu = self.epoch
+        self.loss = test_loss/total
+
+    def __run__(self):
+        if self.mode == "train":
+            for self.epoch in range(self.start_epoch, self.epochs):
+                self.train()
+        elif self.mode == "test":
+            try:
+                fingerprint = os.path.getmtime('{model_dir}/ckpt.pth'.format(model_dir=self.model_dir))
+                self.state = AsyncSaver(self.model_path).get()
+                assert self.state['epoch.test'] + 1 < self.epochs
+                self.net.load_state_dict(self.state['net.train'])
+                self.epoch = self.state['epoch.train']
+                self.test()
+                while True:
+                    # Restart from train point
+                    _fingerprint = os.path.getmtime('{model_dir}/ckpt.pth'.format(model_dir=self.model_dir))
+                    if not _fingerprint == fingerprint:
+                        fingerprint = _fingerprint
+                        self.state = AsyncSaver(self.model_path).get()
+                        assert self.state['epoch.train'] + 1 < self.epochs
+                        self.net.load_state_dict(self.state['net.train'])
+                        self.epoch = self.state['epoch.train']
+                        self.test()
+                    time.sleep(1)
+            except AssertionError:
+                return
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='PyTorch CIFAR10 Training')
     parser.add_argument('--lr', default=0.1, type=float, help='learning rate')
     parser.add_argument('--resume', '-r', action='store_true', help='resume from checkpoint')
-    parser.add_argument('--epochs', '-e', default=350, help='gives the number of epochs to train the network')
+    parser.add_argument('--epochs', '-e', default=10, type=int, help='gives the number of epochs to train the network')
     parser.add_argument('--arch', '-a', default="MobileNetV2")
     args = parser.parse_args()
-    tester = Trainer(args)
-    tester.run()
+
+    t0 = time.time()
+    trainer = Trainer(args, mode="test")
+    print(datetime.timedelta(seconds=time.time()-t0))
+
