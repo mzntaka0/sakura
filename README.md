@@ -86,7 +86,7 @@ Total over 10 epochs: 0:06:46.550089
 ## Setup
 ```
 conda install -c pytorch torchvision
-conda install -c jcadic iyo_core
+conda install -c ninedwlab iyo_core
 ```
 
 ## Train
