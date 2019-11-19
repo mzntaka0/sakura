@@ -160,8 +160,9 @@ class Trainer(tr.Trainer):
                                                      if self.loss is not None else None,
                                                      loss_test='%.2E' % Decimal(self.state["loss.test"])
                                                      if "loss.test" in self.state else None,
-                                                     acc='%.2E' % Decimal(self.acc) if self.acc is not None else None,
-                                                     acc_test='%.2E' % Decimal(self.state["acc.test"])
+                                                     acc='%.3F' % self.acc
+                                                     if self.acc is not None else None,
+                                                     acc_test='%.3F' % self.state["acc.test"]
                                                      if "acc.test" in self.state else None,
                                                      skipped=self.skipped if not self.epoch % 5 == 0 else "-"),
                                                  total=N):
