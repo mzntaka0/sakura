@@ -72,13 +72,13 @@ Epoch: 7
 Saving..
 
 Epoch: 8
-[==== 391/391 ====>]  Step: 93ms | Tot: 35s508ms | Loss: 0.909 | Acc: 68.308%  
+[==== 391/391 ====>]  Step: 93ms | Tot: 35s508ms | Loss: 0.909 | Acc: 68.308%
 [==== 100/100 ====>]  Step: 38ms | Tot: 4s11ms | Loss: 0.890 | Acc: 69.220%
 Saving..
 
 Epoch: 9
-[==== 391/391 ====>]  Step: 106ms | Tot: 35s602ms | Loss: 0.886 | Acc: 69.102%            
-[==== 100/100 ====>]  Step: 36ms | Tot: 4s98ms | Loss: 0.920 | Acc: 67.950%                                                 ```                  
+[==== 391/391 ====>]  Step: 106ms | Tot: 35s602ms | Loss: 0.886 | Acc: 69.102%
+[==== 100/100 ====>]  Step: 36ms | Tot: 4s98ms | Loss: 0.920 | Acc: 67.950%                                                 ```
 ```
 Total over 10 epochs: 0:06:46.550089
 
