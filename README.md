@@ -5,7 +5,6 @@
 Fast asynchronous training (time in evaluation is saved) with [Iyo](http://iyo.ai/) on the CIFAR10 dataset.
 248
 ## Prerequisites
-- Python 3.6
 - Iyo 19.10
 
 ## Benchmark
@@ -85,8 +84,7 @@ Total over 10 epochs: 0:06:46.550089
 
 ## Setup
 ```
-conda install -c pytorch torchvision
-conda install -c ninedwlab iyo_core
+conda install -c ninedwlab iyo
 ```
 
 ## Train
