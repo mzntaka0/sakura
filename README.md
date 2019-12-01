@@ -113,4 +113,4 @@ python main.py --resume --arch MobileNetV2 --lr=0.01 --epochs 350
 | [DPN92](https://arxiv.org/abs/1707.01629)             | 95.16%      |
 
 ## Contact
-For any question please contact me at j.cadic@9dw-lab.jp
+For any question please contact me at j.cadic@protonmail.ch
