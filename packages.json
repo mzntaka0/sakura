@@ -1,0 +1,6 @@
+[
+    "asyncdnn",
+    "asyncdnn.nn.models",
+    "asyncdnn.nn.modules",
+    "asyncdnn.nn.trainers"
+]

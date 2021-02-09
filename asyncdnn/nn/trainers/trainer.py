@@ -1,4 +1,9 @@
-'''Train CIFAR10 with PyTorch and Iyo'''
+'''Train CIFAR10 with PyTorch'''
+import torch
+from torch import nn
+from tqdm import tqdm
+from decimal import Decimal
+import multiprocessing as mp
 import torch.optim as optim
 import torch.backends.cudnn as cudnn
 import torchvision
@@ -8,16 +13,12 @@ import time
 import datetime
 import os
 import argparse
-from iyo.core.nn.modules import AsyncSaver
-from iyo.core.nn.decorators.modules import synchronize
-from models import *
-from tqdm import tqdm
-from decimal import Decimal
-import multiprocessing as mp
-from iyo.core.nn import trainers as tr
+from asyncdnn.nn.modules import AsyncSaver
+from asyncdnn.decorators import synchronize
+from asyncdnn.nn.trainers.default_trainer import DefaultTrainer
 
 
-class Trainer(tr.Trainer):
+class Trainer(DefaultTrainer):
     def __init__(self, args, mode="train"):
         super(Trainer, self).__init__(args=args, mode=mode)
         assert mode in ["train", "test"]

@@ -1,10 +1,8 @@
-from trainer import Trainer
-import argparse
-from iyo.core.nn.trainers.async_trainer import AsyncTrainer
-
 import time
 import datetime
-import torch
+import argparse
+from asyncdnn.nn.trainers import AsyncTrainer, Trainer
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='PyTorch CIFAR10 Training')
     parser.add_argument('--lr', default=0.1, type=float, help='learning rate')
