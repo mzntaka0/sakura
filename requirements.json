@@ -1,5 +1,5 @@
 [
-  "gnutools-python",
+  "gnutools-python==2.0a1",
   "torch",
   "torchvision",
   "tqdm"
