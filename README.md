@@ -1,22 +1,22 @@
-![alt text](https://raw.githubusercontent.com/JeanMaximilienCadic/CIFAR10-Iyo/master/img/cifar.jpg)
+![alt text](img/async.png)
 
-# NNAsync
+# asyncdnn
 
 Fast asynchronous training (time in evaluation is saved)  on the CIFAR10 dataset.
 ## Overview
-## NNAsync modules
+## ASyncDNN modules
 
 At a granular level, synskit is a library that consists of the following components:
 
 | Component | Description |
 | ---- | --- |
-| **nnasync** | Fast CIFAR10 package|
-| **nnasync.decorators** | Decorators|
-| **nnasync.nn** | Neural network module|
-| **nnasync.nn.models** | Models Zoo|
-| **nnasync.nn.modules** | Modules for the network|
-| **nnasync.trainers** | Trainers |
-| **nnasync.test** | Test the setup|
+| **asyncdnn** | Fast CIFAR10 package|
+| **asyncdnn.decorators** | Decorators|
+| **asyncdnn.nn** | Neural network module|
+| **asyncdnn.nn.models** | Models Zoo|
+| **asyncdnn.nn.modules** | Modules for the network|
+| **asyncdnn.trainers** | Trainers |
+| **asyncdnn.test** | Test the setup|
 
 ## Setup
 ### Local
