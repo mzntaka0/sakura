@@ -47,12 +47,12 @@ docker run --rm --gpus all -it jcadic/asyncdnn bash
 ## Train
 Start the training with:
 ```
-python main.py --arch MobileNetV2 --lr=0.01 --epochs 350
+python -m asyncdnn --arch MobileNetV2 --lr=0.01 --epochs 350
 ```
 
 Resume the training with:
 ```
-python main.py --resume --arch MobileNetV2 --lr=0.01 --epochs 350
+python -m asyncdnn --resume --arch MobileNetV2 --lr=0.01 --epochs 350
 ```
 
 ## Accuracy
