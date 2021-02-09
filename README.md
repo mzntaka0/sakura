@@ -10,7 +10,7 @@ At a granular level, synskit is a library that consists of the following compone
 
 | Component | Description |
 | ---- | --- |
-| **asyncdnn** | Fast CIFAR10 package|
+| **asyncdnn** | ASyncDNN package|
 | **asyncdnn.decorators** | Decorators|
 | **asyncdnn.nn** | Neural network module|
 | **asyncdnn.nn.models** | Models Zoo|
