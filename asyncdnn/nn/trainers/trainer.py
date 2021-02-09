@@ -16,7 +16,7 @@ import argparse
 from asyncdnn.nn.modules import AsyncSaver
 from asyncdnn.decorators import synchronize
 from asyncdnn.nn.trainers.default_trainer import DefaultTrainer
-
+from asyncdnn.nn.models import *
 
 class Trainer(DefaultTrainer):
     def __init__(self, args, mode="train"):
@@ -25,8 +25,8 @@ class Trainer(DefaultTrainer):
         self.args = args
         self.mode=mode
         self.arch = self.args.arch
-        self.model_dir = "./checkpoint/{arch}".format(arch=self.arch)
-        self.model_path = '{model_dir}/ckpt.pth'.format(model_dir=self.model_dir)
+        self.model_dir = f"__data__/pth/checkpoint/{self.arch}"
+        self.model_path = f'{self.model_dir}/ckpt.pth'
         self.epochs = self.args.epochs
         self.init_lr = self.args.lr
         self.start_epoch = 0
@@ -36,11 +36,11 @@ class Trainer(DefaultTrainer):
         self.loss = np.float("inf")
         self.records = {}
 
-        self.state = {"net.{mode}".format(mode=self.mode): None,
-                      "epoch.{mode}".format(mode=self.mode): self.epoch,
-                      "acc.{mode}".format(mode=self.mode): self.acc,
-                      "loss.{mode}".format(mode=self.mode): self.loss,
-                      "lu.{mode}".format(mode=self.mode): self.lu}
+        self.state = {f"net.{self.mode}": None,
+                      f"epoch.{self.mode}": self.epoch,
+                      f"acc.{self.mode}": self.acc,
+                      f"loss.{self.mode}": self.loss,
+                      f"lu.{self.mode}": self.lu}
         os.makedirs(self.model_dir, exist_ok=True)
         # Cpu/Gpu
         device = 'cuda' if torch.cuda.is_available() else 'cpu'
@@ -56,7 +56,7 @@ class Trainer(DefaultTrainer):
             ])
 
             dataset = torchvision.datasets.CIFAR10(root='./data', train=True, download=True, transform=transform_train)
-            self.loader = torch.utils.data.DataLoader(dataset, batch_size=128*5, shuffle=False, num_workers=mp.cpu_count())
+            self.loader = torch.utils.data.DataLoader(dataset, batch_size=10*5, shuffle=False, num_workers=mp.cpu_count())
             # Model
             print('==> Building training model..')
             self.net = eval(self.args.arch)()

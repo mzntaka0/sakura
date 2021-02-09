@@ -1,5 +1,6 @@
 [
   "gnutools-python",
   "torch",
-  "torchvision"
+  "torchvision",
+  "tqdm"
 ]

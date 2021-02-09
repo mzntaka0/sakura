@@ -19,8 +19,15 @@ At a granular level, synskit is a library that consists of the following compone
 | **nnasync.test** | Test the setup|
 
 ## Setup
+### Local
 ```
 python setup.py install 
+```
+
+### Docker
+```
+docker build . -t jcadic/asyncdnn
+docker run --rm --gpus all -it jcadic/asyncdnn bash 
 ```
 
 ## Test the setup
