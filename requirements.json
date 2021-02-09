@@ -1,0 +1,5 @@
+[
+  "gnutools-python",
+  "torch",
+  "torchvision"
+]

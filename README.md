@@ -1,14 +1,71 @@
 ![alt text](https://raw.githubusercontent.com/JeanMaximilienCadic/CIFAR10-Iyo/master/img/cifar.jpg)
 
-# Fast training on CIFAR10 with IYO
+# NNAsync
 
-Fast asynchronous training (time in evaluation is saved) with [Iyo](http://iyo.ai/) on the CIFAR10 dataset.
-248
-## Prerequisites
-- Iyo 19.10
+Fast asynchronous training (time in evaluation is saved)  on the CIFAR10 dataset.
+## Overview
+## NNAsync modules
 
-## Benchmark
-### Iyo Async (+25% faster)
+At a granular level, synskit is a library that consists of the following components:
+
+| Component | Description |
+| ---- | --- |
+| **nnasync** | Fast CIFAR10 package|
+| **nnasync.decorators** | Decorators|
+| **nnasync.nn** | Neural network module|
+| **nnasync.nn.models** | Models Zoo|
+| **nnasync.nn.modules** | Modules for the network|
+| **nnasync.trainers** | Trainers |
+| **nnasync.test** | Test the setup|
+
+## Setup
+```
+python setup.py install 
+```
+
+## Test the setup
+```aidl
+ python -m asyncdnn.test
+```
+```aidl
+=1= TEST PASSED : asyncdnn
+=1= TEST PASSED : asyncdnn.decorators
+=1= TEST PASSED : asyncdnn.nn
+=1= TEST PASSED : asyncdnn.nn.models
+=1= TEST PASSED : asyncdnn.nn.modules
+=1= TEST PASSED : asyncdnn.nn.trainers
+=1= TEST PASSED : asyncdnn.test
+```
+
+## Train
+Start the training with:
+```
+python main.py --arch MobileNetV2 --lr=0.01 --epochs 350
+```
+
+Resume the training with:
+```
+python main.py --resume --arch MobileNetV2 --lr=0.01 --epochs 350
+```
+
+## Accuracy
+| Model             | Acc.        |
+| ----------------- | ----------- |
+| [VGG16](https://arxiv.org/abs/1409.1556)              | 92.64%      |
+| [ResNet18](https://arxiv.org/abs/1512.03385)          | 93.02%      |
+| [ResNet50](https://arxiv.org/abs/1512.03385)          | 93.62%      |
+| [ResNet101](https://arxiv.org/abs/1512.03385)         | 93.75%      |
+| [MobileNetV2](https://arxiv.org/abs/1801.04381)       | 94.43%      |
+| [ResNeXt29(32x4d)](https://arxiv.org/abs/1611.05431)  | 94.73%      |
+| [ResNeXt29(2x64d)](https://arxiv.org/abs/1611.05431)  | 94.82%      |
+| [DenseNet121](https://arxiv.org/abs/1608.06993)       | 95.04%      |
+| [PreActResNet18](https://arxiv.org/abs/1603.05027)    | 95.11%      |
+| [DPN92](https://arxiv.org/abs/1707.01629)             | 95.16%      |
+
+
+
+## Improvements
+### Asynchronous training (+25% faster)
 ==> Loading training data..
 ==> Building training model..
 
@@ -81,36 +138,6 @@ Epoch: 9
 ```
 Total over 10 epochs: 0:06:46.550089
 
-
-## Setup
-```
-conda install -c ninedwlab iyo
-```
-
-## Train
-Start the training with:
-```
-python main.py --arch MobileNetV2 --lr=0.01 --epochs 350
-```
-
-Resume the training with:
-```
-python main.py --resume --arch MobileNetV2 --lr=0.01 --epochs 350
-```
-
-## Accuracy
-| Model             | Acc.        |
-| ----------------- | ----------- |
-| [VGG16](https://arxiv.org/abs/1409.1556)              | 92.64%      |
-| [ResNet18](https://arxiv.org/abs/1512.03385)          | 93.02%      |
-| [ResNet50](https://arxiv.org/abs/1512.03385)          | 93.62%      |
-| [ResNet101](https://arxiv.org/abs/1512.03385)         | 93.75%      |
-| [MobileNetV2](https://arxiv.org/abs/1801.04381)       | 94.43%      |
-| [ResNeXt29(32x4d)](https://arxiv.org/abs/1611.05431)  | 94.73%      |
-| [ResNeXt29(2x64d)](https://arxiv.org/abs/1611.05431)  | 94.82%      |
-| [DenseNet121](https://arxiv.org/abs/1608.06993)       | 95.04%      |
-| [PreActResNet18](https://arxiv.org/abs/1603.05027)    | 95.11%      |
-| [DPN92](https://arxiv.org/abs/1707.01629)             | 95.16%      |
 
 ## Contact
 For any question please contact me at j.cadic@protonmail.ch
