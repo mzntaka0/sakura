@@ -6,7 +6,7 @@ Fast asynchronous training (time in evaluation is saved)  on the CIFAR10 dataset
 ## Overview
 ## ASyncDNN modules
 
-At a granular level, synskit is a library that consists of the following components:
+At a granular level, AsyncDNN is a library that consists of the following components:
 
 | Component | Description |
 | ---- | --- |
