@@ -1,9 +1,7 @@
-FROM jcadic/vanilla:torch3.6
+FROM  pytorch/pytorch
 
-COPY . /asyncdnn
+COPY ./ /workspace
 
-WORKDIR /asyncdnn
+WORKDIR /workspace
 
 RUN python setup.py install
-
-CMD ["python", "-m", "asyncdnn.test"]

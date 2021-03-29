@@ -1,9 +1,0 @@
-[
-    "asyncdnn",
-    "asyncdnn.decorators",
-    "asyncdnn.nn",
-    "asyncdnn.nn.models",
-    "asyncdnn.nn.modules",
-    "asyncdnn.nn.trainers",
-    "asyncdnn.test"
-]
