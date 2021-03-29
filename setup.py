@@ -2,24 +2,21 @@ from setuptools import setup
 import json
 
 setup(
-    name="asyncdnn",
-    version="1.0a1",
-    short_description="Python library for asynchronous DNN training",
-    long_description="Python library for asynchronous DNN training",
-    packages=json.load(open("packages.json", "r")),
-    include_package_data=True,
-    package_data=json.load(open("package_data.json", "r")),
-    url='https://github.com/JeanMaximilienCadic/ASyncDNN',
-    license='MIT Licence',
-    author='CADIC Jean-Maximilien',
+    name="sakura",
+    version="0.0.1",
+    short_description="Sakura provides asynchronous training for DNN.",
+    long_description="Sakura provides asynchronous training for DNN.",
+    url='https://zakuro.ai',
+    license='ZakuroAI',
+    author='ZakuroAI',
     python_requires='>=3.6',
-    install_requires=json.load(open("requirements.json", "r")),
-    author_email='info@cadic.jp',
-    description='Python library for asynchronous DNN training',
+    install_requires=[l.rsplit() for l in open("requirements.txt", "r")],
+    author_email='info@zakuro.ai',
+    description='Sakura provides asynchronous training for DNN.',
     platforms="linux_debian_10_x86_64",
     classifiers=[
         "Programming Language :: Python :: 3.6",
-        "License :: OSI Approved :: MIT License",
+        "License :: OSI Approved :: ZakuroAI License",
     ]
 )
 

@@ -1,6 +1,2 @@
-data
 .idea
 __pycache__
-pytorch-cifar
-__data__
-*/etc/*
