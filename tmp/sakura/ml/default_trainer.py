@@ -75,10 +75,7 @@ class DefaultTrainer:
                     assert self.state.shared.metrics.accuracy.current.test < self.state.shared.metrics.accuracy.best.test
                 except AssertionError:
                     torch.save(self._model.state_dict(), self._model_path)
-                try:
-                    self._store.set("shared", json.dumps(RecDict(self.state.shared)))
-                except RuntimeError:
-                    return
+                self._store.set("shared", json.dumps(RecDict(self.state.shared)))
 
     def description(self):
         shared = json.loads(self._store.get('shared'))
