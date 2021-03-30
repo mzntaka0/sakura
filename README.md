@@ -7,7 +7,7 @@ Sakura is a Python package that provides two high-level features:
 - An integration with PyTorch. 
 
 
-You can reuse your favorite Python packages such as NumPy, SciPy and Cython to extend sakura integration.
+You can reuse your favorite Python framework such as Pytorch, Tensorflow of PaddlePaddle.
 
 
 ## Sakura modules
