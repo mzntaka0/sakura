@@ -55,7 +55,7 @@ If you worked with PyTorch in your project your would find a common structure. S
 ```python
 class Trainer(DefaultTrainer):
    ...
-    @train
+    @synchronize
     def train(self):
         self._model.train()
         self._avg_loss = []
@@ -74,7 +74,7 @@ class Trainer(DefaultTrainer):
             pred = output.argmax(dim=1, keepdim=True) 
             self._correct += pred.eq(target.view_as(pred)).sum().item()
 
-    @test
+    @synchronize
     def test(self):
         self._correct = 0
         self._loss = 0

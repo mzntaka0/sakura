@@ -8,7 +8,7 @@ from torch.optim.lr_scheduler import StepLR
 from tqdm import tqdm
 import torch
 from sakura.ml import AsyncTrainer, DefaultTrainer
-from sakura.ml.decorators import test, train
+from sakura.ml.decorators import synchronize
 
 
 class Net(nn.Module):
@@ -72,7 +72,7 @@ class Trainer(DefaultTrainer):
         self._loss = 0
         self._epoch_start = 1
 
-    @train
+    @synchronize
     def train(self):
         self._model.train()
         self._avg_loss = []
@@ -91,7 +91,7 @@ class Trainer(DefaultTrainer):
             pred = output.argmax(dim=1, keepdim=True)
             self._correct += pred.eq(target.view_as(pred)).sum().item()
 
-    @test
+    @synchronize
     def test(self):
         self._correct = 0
         self._loss = 0
