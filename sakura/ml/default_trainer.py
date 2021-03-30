@@ -57,28 +57,7 @@ class DefaultTrainer:
         self._test_loader = test_loader
 
     def run(self):
-        for self.state.shared.epoch.current in range(self.state.shared.epoch.current, self.state.shared.epoch.total + 1):
-            if self._mode == "train":
-                self.train()
-                self._model.cpu()
-                for tag, v in enumerate(self._model.state_dict().values()):
-                    self._dist.send(v, 1 - self._rank, tag=tag)
-                self._model.cuda()
-                self.state.opt.scheduler.step()
-            else:
-                for tag, (k, v) in enumerate(self._model.state_dict().items()):
-                    self._dist.recv(v, 1 - self._rank, tag=tag)
-                # Test
-                self.test()
-                try:
-                    assert self.state.shared.metrics.accuracy.best.test is not None
-                    assert self.state.shared.metrics.accuracy.current.test < self.state.shared.metrics.accuracy.best.test
-                except AssertionError:
-                    torch.save(self._model.state_dict(), self._model_path)
-                try:
-                    self._store.set("shared", json.dumps(RecDict(self.state.shared)))
-                except RuntimeError:
-                    return
+        raise NotImplementedError
 
     def description(self):
         shared = json.loads(self._store.get('shared'))

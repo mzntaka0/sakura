@@ -1,37 +1,9 @@
-import os
-import torch
 import time
-from argparse import Namespace
 import numpy as np
-# def save_checkpoint(func):
-#     def wrapper(*args, **kwargs):
-#         self = args[0]
-#         state_dict = self._model.state_dict()
-#         state_dict._metadata.update({"state":vars(self.state)})
-#         func(*args, **kwargs, state_dict=state_dict)
-#
-#     return wrapper
+import torch
+import json
+from sakura import RecDict
 
-def load_checkpoint(func):
-    def wrapper(*args, **kwargs):
-        self  = args[0]
-        while True:
-            try:
-                assert os.path.exists(self._checkpoint_path)
-                mtime = os.path.getmtime(self._checkpoint_path)
-                assert not mtime == self.state.mtime
-                state_dict = torch.load(self._checkpoint_path)
-                state = state_dict._metadata["state"]
-                assert state["epoch"]>=self.state.epoch
-                func(*args, **kwargs, state_dict=state_dict)
-                self.state = Namespace(**state)
-                return
-            except AssertionError:
-                time.sleep(1)
-                print(f"{self.state.epoch} waiting")
-
-
-    return wrapper
 
 def train(func):
     def wrapper(*args, **kwargs):
@@ -39,6 +11,13 @@ def train(func):
         t0 = time.time()
 
         func(*args, **kwargs)
+
+        self._model.cpu()
+        for tag, v in enumerate(self._model.state_dict().values()):
+            self._dist.send(v, 1 - self._rank, tag=tag)
+        self._model.cuda()
+        self.state.opt.scheduler.step()
+
 
         self.state.shared.metrics.accuracy.current.train = 100. * self._correct / len(self._train_loader.dataset)
         self.state.shared.metrics.loss.current.train = np.mean(self._avg_loss)
@@ -59,6 +38,8 @@ def test(func):
         metrics = self.state.shared.metrics
         metrics.loss.current.test = 0
 
+        for tag, (k, v) in enumerate(self._model.state_dict().items()):
+            self._dist.recv(v, 1 - self._rank, tag=tag)
         func(*args, **kwargs)
 
         # Update the metrics
@@ -71,6 +52,11 @@ def test(func):
             metrics.accuracy.best.test = metrics.accuracy.current.test
             metrics.loss.best.test = metrics.loss.current.test
             self.state.shared.epoch.best = self.state.shared.epoch.current + 1
+            torch.save(self._model.state_dict(), self._model_path)
+        try:
+            self._store.set("shared", json.dumps(RecDict(self.state.shared)))
+        except RuntimeError:
+            return
 
 
     return wrapper
