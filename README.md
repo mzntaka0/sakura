@@ -23,7 +23,7 @@ At a granular level, Sakura is a library that consists of the following componen
 ## Installation
 
 ### Docker
-To build the image with docker-compose and run a test demo on MNIST.
+To build the image and launch a container to run a test demo on MNIST.
 ```
 sh docker.sh
 ```
