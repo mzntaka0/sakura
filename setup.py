@@ -2,7 +2,7 @@ from setuptools import setup
 import json
 
 setup(
-    name="sakura",
+    name="sakura-ml",
     version="0.0.1",
     short_description="Sakura provides asynchronous training for DNN.",
     long_description="Sakura provides asynchronous training for DNN.",
@@ -20,8 +20,8 @@ setup(
     description='Sakura provides asynchronous training for DNN.',
     platforms="linux_debian_10_x86_64",
     classifiers=[
-        "Programming Language :: Python :: 3.6",
-        "License :: OSI Approved :: ZakuroAI License",
+        "Programming Language :: Python :: 3",
+        "License :: OSI Approved :: MIT License",
     ]
 )
 
