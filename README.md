@@ -63,10 +63,14 @@ class Trainer(DefaultTrainer):
 
 
 ## Installation
-
 ### Local
 ```
 python setup.py install
+```
+
+### Pypi
+```
+pip install sakura-ml  --no-cache-dir
 ```
 
 ### Docker
