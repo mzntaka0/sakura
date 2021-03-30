@@ -40,6 +40,12 @@ You should be able to see this output with no delay between epochs (asynchronous
 (7) MNIST | Epoch: 9/10 | Acc: 99.0900 / (99.1000) | Loss:0.0285 / (0.0273): 100%|███████████████████████████████████████████████████████| 938/938 [00:12<00:00, 75.10it/s]
 (9) MNIST | Epoch: 10/10 | Acc: 99.1700 / (99.1700) | Loss:0.0267 / (0.0267): 100%|███████████████████████████████████████████████████████| 938/938 [00:12<00:00, 73.22it/s]
 ```
+
+FYI the meaning of the above notation is:
+```
+([best_epoch]) [name_exp] | Epoch: [current]/[total] | Acc: [current_test_acc] / ([best_test_acc]) | Loss:[current_test_loss] / ([best_test_loss]): 100%|███| [batch_k]/[batch_n] [[time_train]<[time_left], [it/s]]
+```
+
 ### Local
 ```
 python setup.py install
