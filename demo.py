@@ -106,7 +106,7 @@ class Trainer(DefaultTrainer):
                 self._correct += pred.eq(target.view_as(pred)).sum().item()
 
     def run(self, *args, **kwargs):
-        for self._epoch in range(self._epoch_start, self._epochs):
+        for self.state.shared.epoch.current in range(self._epoch_start, self._epochs):
             if self._mode == "train":
                 self.train()
                 self.state.opt.scheduler.step()
