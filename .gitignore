@@ -1,7 +1,7 @@
 build
 dist
 *.egg-info
-data1/*
+data/*
 *.pt
 .idea
 __pycache__
