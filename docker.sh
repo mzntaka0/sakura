@@ -1,4 +1,3 @@
-docker pull zakuroai/sakura
 docker run --rm \
   --gpus all \
   --shm-size=70g \

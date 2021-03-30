@@ -76,6 +76,7 @@ pip install sakura-ml  --no-cache-dir
 ### Docker
 To build the image and launch a container to run a test demo on MNIST.
 ```
+docker pull zakuroai/sakura
 sh docker.sh
 ```
 You should be able to see this output with no delay between epochs (asynchronous testing).
