@@ -109,7 +109,7 @@ class Trainer(DefaultTrainer):
         for self.state.shared.epoch.current in range(self._epoch_start, self._epochs):
             if self._mode == "train":
                 self.train()
-                self.state.opt.scheduler.step()
+                self._scheduler.step()
             else:
                 self.test()
 
