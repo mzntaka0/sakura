@@ -20,36 +20,6 @@ At a granular level, Sakura is a library that consists of the following componen
 | **sakura.ml** | Contains the code related to ml processing |
 | **sakura.decorators** | Decorators used to synchronize the train/test.|
 
-## Installation
-
-### Docker
-To build the image and launch a container to run a test demo on MNIST.
-```
-sh docker.sh
-```
-You should be able to see this output with no delay between epochs (asynchronous testing).
-```
-(1) MNIST | Epoch: 1/10: 100%||███████████████████████████████████████████████████████| 938/938 [00:12<00:00, 76.14it/s]
-(1) MNIST | Epoch: 2/10: 100%||███████████████████████████████████████████████████████| 938/938 [00:12<00:00, 76.43it/s]
-(2) MNIST | Epoch: 3/10 | Acc: 98.5000 / (98.5000) | Loss:0.0474 / (0.0474): 100%|███████████████████████████████████████████████████████| 938/938 [00:12<00:00, 76.13it/s]
-(3) MNIST | Epoch: 4/10 | Acc: 98.7900 / (98.7900) | Loss:0.0376 / (0.0376): 100%|███████████████████████████████████████████████████████| 938/938 [00:12<00:00, 75.53it/s]
-(4) MNIST | Epoch: 5/10 | Acc: 98.7900 / (98.7900) | Loss:0.0337 / (0.0337): 100%|███████████████████████████████████████████████████████| 938/938 [00:12<00:00, 74.20it/s]
-(5) MNIST | Epoch: 6/10 | Acc: 98.9700 / (98.9700) | Loss:0.0310 / (0.0310): 100%|███████████████████████████████████████████████████████| 938/938 [00:12<00:00, 73.46it/s]
-(6) MNIST | Epoch: 7/10 | Acc: 99.0000 / (99.0000) | Loss:0.0290 / (0.0290): 100%|███████████████████████████████████████████████████████| 938/938 [00:13<00:00, 71.63it/s]
-(7) MNIST | Epoch: 8/10 | Acc: 99.1000 / (99.1000) | Loss:0.0273 / (0.0273): 100%|███████████████████████████████████████████████████████| 938/938 [00:12<00:00, 73.11it/s]
-(7) MNIST | Epoch: 9/10 | Acc: 99.0900 / (99.1000) | Loss:0.0285 / (0.0273): 100%|███████████████████████████████████████████████████████| 938/938 [00:12<00:00, 75.10it/s]
-(9) MNIST | Epoch: 10/10 | Acc: 99.1700 / (99.1700) | Loss:0.0267 / (0.0267): 100%|███████████████████████████████████████████████████████| 938/938 [00:12<00:00, 73.22it/s]
-```
-
-FYI the meaning of the above notation is:
-```
-([best_epoch]) [name_exp] | Epoch: [current]/[total] | Acc: [current_test_acc] / ([best_test_acc]) | Loss:[current_test_loss] / ([best_test_loss]): 100%|███| [batch_k]/[batch_n] [[time_train]<[time_left], [it/s]]
-```
-
-### Local
-```
-python setup.py install
-```
 ## Code design
 If you worked with PyTorch in your project your would find a common structure. Simply change the `test` and `train` in your trainer as shown in the demo file. 
 ```python
@@ -91,3 +61,34 @@ class Trainer(DefaultTrainer):
 ```
 
 
+
+## Installation
+
+### Local
+```
+python setup.py install
+```
+
+### Docker
+To build the image and launch a container to run a test demo on MNIST.
+```
+sh docker.sh
+```
+You should be able to see this output with no delay between epochs (asynchronous testing).
+```
+(1) MNIST | Epoch: 1/10: 100%||███████████████████████████████████████████████████████| 938/938 [00:12<00:00, 76.14it/s]
+(1) MNIST | Epoch: 2/10: 100%||███████████████████████████████████████████████████████| 938/938 [00:12<00:00, 76.43it/s]
+(2) MNIST | Epoch: 3/10 | Acc: 98.5000 / (98.5000) | Loss:0.0474 / (0.0474): 100%|███████████████████████████████████████████████████████| 938/938 [00:12<00:00, 76.13it/s]
+(3) MNIST | Epoch: 4/10 | Acc: 98.7900 / (98.7900) | Loss:0.0376 / (0.0376): 100%|███████████████████████████████████████████████████████| 938/938 [00:12<00:00, 75.53it/s]
+(4) MNIST | Epoch: 5/10 | Acc: 98.7900 / (98.7900) | Loss:0.0337 / (0.0337): 100%|███████████████████████████████████████████████████████| 938/938 [00:12<00:00, 74.20it/s]
+(5) MNIST | Epoch: 6/10 | Acc: 98.9700 / (98.9700) | Loss:0.0310 / (0.0310): 100%|███████████████████████████████████████████████████████| 938/938 [00:12<00:00, 73.46it/s]
+(6) MNIST | Epoch: 7/10 | Acc: 99.0000 / (99.0000) | Loss:0.0290 / (0.0290): 100%|███████████████████████████████████████████████████████| 938/938 [00:13<00:00, 71.63it/s]
+(7) MNIST | Epoch: 8/10 | Acc: 99.1000 / (99.1000) | Loss:0.0273 / (0.0273): 100%|███████████████████████████████████████████████████████| 938/938 [00:12<00:00, 73.11it/s]
+(7) MNIST | Epoch: 9/10 | Acc: 99.0900 / (99.1000) | Loss:0.0285 / (0.0273): 100%|███████████████████████████████████████████████████████| 938/938 [00:12<00:00, 75.10it/s]
+(9) MNIST | Epoch: 10/10 | Acc: 99.1700 / (99.1700) | Loss:0.0267 / (0.0267): 100%|███████████████████████████████████████████████████████| 938/938 [00:12<00:00, 73.22it/s]
+```
+
+FYI the meaning of the above notation is:
+```
+([best_epoch]) [name_exp] | Epoch: [current]/[total] | Acc: [current_test_acc] / ([best_test_acc]) | Loss:[current_test_loss] / ([best_test_loss]): 100%|███| [batch_k]/[batch_n] [[time_train]<[time_left], [it/s]]
+```
