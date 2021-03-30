@@ -2,7 +2,7 @@
 
 --------------------------------------------------------------------------------
 
-Sakura is a Python package that provides two high-level features:
+Sakura is a simple but powerfull tool to reduce training time by running the train/test asynchronously. It provides two features:
 - A simple ML framework for asynchronous training.
 - An integration with PyTorch. 
 
@@ -12,22 +12,34 @@ You can reuse your favorite Python framework such as Pytorch, Tensorflow of Padd
 
 ## Sakura modules
 
-At a granular level, sakura is a library that consists of the following components:
+At a granular level, Sakura is a library that consists of the following components:
 
 | Component | Description |
 | ---- | --- |
 | **sakura** | Contains the sakuro modules. |
 | **sakura.ml** | Contains the code related to ml processing |
-| **sakura.decorators** | Decorators used to encapsulate the train/test.|
+| **sakura.decorators** | Decorators used to synchronize the train/test.|
 
 ## Installation
 
 ### Docker
-To build the image with docker-compose
+To build the image with docker-compose and run a test demo on MNIST.
 ```
 sh docker.sh
 ```
-
+You should be able to see this output with no delay between epochs (asynchronous testing).
+```
+(1) MNIST | Epoch: 1/10: 100%||███████████████████████████████████████████████████████| 938/938 [00:12<00:00, 76.14it/s]
+(1) MNIST | Epoch: 2/10: 100%||███████████████████████████████████████████████████████| 938/938 [00:12<00:00, 76.43it/s]
+(2) MNIST | Epoch: 3/10 | Acc: 98.5000 / (98.5000) | Loss:0.0474 / (0.0474): 100%|███████████████████████████████████████████████████████| 938/938 [00:12<00:00, 76.13it/s]
+(3) MNIST | Epoch: 4/10 | Acc: 98.7900 / (98.7900) | Loss:0.0376 / (0.0376): 100%|███████████████████████████████████████████████████████| 938/938 [00:12<00:00, 75.53it/s]
+(4) MNIST | Epoch: 5/10 | Acc: 98.7900 / (98.7900) | Loss:0.0337 / (0.0337): 100%|███████████████████████████████████████████████████████| 938/938 [00:12<00:00, 74.20it/s]
+(5) MNIST | Epoch: 6/10 | Acc: 98.9700 / (98.9700) | Loss:0.0310 / (0.0310): 100%|███████████████████████████████████████████████████████| 938/938 [00:12<00:00, 73.46it/s]
+(6) MNIST | Epoch: 7/10 | Acc: 99.0000 / (99.0000) | Loss:0.0290 / (0.0290): 100%|███████████████████████████████████████████████████████| 938/938 [00:13<00:00, 71.63it/s]
+(7) MNIST | Epoch: 8/10 | Acc: 99.1000 / (99.1000) | Loss:0.0273 / (0.0273): 100%|███████████████████████████████████████████████████████| 938/938 [00:12<00:00, 73.11it/s]
+(7) MNIST | Epoch: 9/10 | Acc: 99.0900 / (99.1000) | Loss:0.0285 / (0.0273): 100%|███████████████████████████████████████████████████████| 938/938 [00:12<00:00, 75.10it/s]
+(9) MNIST | Epoch: 10/10 | Acc: 99.1700 / (99.1700) | Loss:0.0267 / (0.0267): 100%|███████████████████████████████████████████████████████| 938/938 [00:12<00:00, 73.22it/s]
+```
 ### Local
 ```
 python setup.py install
@@ -73,91 +85,3 @@ class Trainer(DefaultTrainer):
 ```
 
 
-## Example of integration
-
-```python
-if __name__ == "__main__":
-    from __future__ import print_function
-    import argparse
-    import torch.nn as nn
-    import torch.nn.functional as F
-    import torch.optim as optim
-    from torchvision import datasets, transforms
-    from torch.optim.lr_scheduler import StepLR
-    from tqdm import tqdm
-    import torch
-    # sakura imports
-    from sakura.ml import AsyncTrainer, DefaultTrainer
-    from sakura.ml.decorators import test, train
-
-    # Training settings
-    parser = argparse.ArgumentParser(description='PyTorch MNIST Example')
-    parser.add_argument('--batch-size', type=int, default=64, metavar='N',
-                        help='input batch size for training (default: 64)')
-    parser.add_argument('--test-batch-size', type=int, default=1000, metavar='N',
-                        help='input batch size for testing (default: 1000)')
-    parser.add_argument('--epochs', type=int, default=14, metavar='N',
-                        help='number of epochs to train (default: 14)')
-    parser.add_argument('--lr', type=float, default=1.0, metavar='LR',
-                        help='learning rate (default: 1.0)')
-    parser.add_argument('--gamma', type=float, default=0.7, metavar='M',
-                        help='Learning rate step gamma (default: 0.7)')
-    parser.add_argument('--no-cuda', action='store_true', default=False,
-                        help='disables CUDA training')
-    parser.add_argument('--dry-run', action='store_true', default=False,
-                        help='quickly check a single pass')
-    parser.add_argument('--seed', type=int, default=1, metavar='S',
-                        help='random seed (default: 1)')
-    parser.add_argument('--log-interval', type=int, default=10, metavar='N',
-                        help='how many batches to wait before logging training status')
-    parser.add_argument('--save-model', action='store_true', default=False,
-                        help='For Saving the current Model')
-    args = parser.parse_args()
-
-
-    # Instantiate
-    torch.manual_seed(args.seed)
-    use_cuda = "cuda" # use_cuda = not args.no_cuda and torch.cuda.is_available()
-    # device = torch.device("cuda" if use_cuda else "cpu")
-    train_kwargs = {'batch_size': args.batch_size}
-    test_kwargs = {'batch_size': args.test_batch_size}
-    if use_cuda:
-        cuda_kwargs = {'num_workers': 1,
-                       'pin_memory': True,
-                       'shuffle': True}
-        train_kwargs.update(cuda_kwargs)
-
-    transform=transforms.Compose(
-        [
-            transforms.ToTensor(),
-            transforms.Normalize((0.1307,), (0.3081,))
-        ])
-    dataset1, dataset2 = datasets.MNIST('../data',
-                                        train=True,
-                                        download=True,
-                                        transform=transform), \
-                         datasets.MNIST('../data',
-                                        train=False,
-                                        transform=transform)
-    train_loader, test_loader = torch.utils.data.DataLoader(dataset1,**train_kwargs), \
-                                torch.utils.data.DataLoader(dataset2, **test_kwargs)
-    epochs = args.epochs
-    
-    # Launch
-    model = Net()
-    optimizer = optim.Adadelta(model.parameters(), lr=args.lr)
-    scheduler = StepLR(optimizer, step_size=1, gamma=args.gamma)
-    
-    # sakura    
-    trainer = AsyncTrainer(cls=Trainer, device="cuda")
-    trainer.run(model,
-                epochs,
-                train_loader,
-                test_loader,
-                optimizer,
-                scheduler,
-                "mnist_cnn.pt",
-                "mnist_cnn.ckpt.pt")
-
-
-```

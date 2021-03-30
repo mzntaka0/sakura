@@ -113,7 +113,7 @@ if __name__ == "__main__":
                         help='input batch size for training (default: 64)')
     parser.add_argument('--test-batch-size', type=int, default=1000, metavar='N',
                         help='input batch size for testing (default: 1000)')
-    parser.add_argument('--epochs', type=int, default=10, metavar='N',
+    parser.add_argument('--epochs', type=int, default=14, metavar='N',
                         help='number of epochs to train (default: 14)')
     parser.add_argument('--lr', type=float, default=1.0, metavar='LR',
                         help='learning rate (default: 1.0)')
@@ -149,17 +149,17 @@ if __name__ == "__main__":
             transforms.ToTensor(),
             transforms.Normalize((0.1307,), (0.3081,))
         ])
-    dataset1, dataset2 = datasets.MNIST('data',
+    dataset1, dataset2 = datasets.MNIST('../data',
                                         train=True,
                                         download=True,
                                         transform=transform), \
-                         datasets.MNIST('data',
+                         datasets.MNIST('../data',
                                         train=False,
                                         transform=transform)
     train_loader, test_loader = torch.utils.data.DataLoader(dataset1,**train_kwargs), \
                                 torch.utils.data.DataLoader(dataset2, **test_kwargs)
     epochs = args.epochs
-    # Instantiate
+    # Launch
     model = Net()
     optimizer = optim.Adadelta(model.parameters(), lr=args.lr)
     scheduler = StepLR(optimizer, step_size=1, gamma=args.gamma)

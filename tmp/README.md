@@ -1,76 +1,42 @@
-from __future__ import print_function
-import argparse
-import torch.nn as nn
-import torch.nn.functional as F
-import torch.optim as optim
-from torchvision import datasets, transforms
-from torch.optim.lr_scheduler import StepLR
-from tqdm import tqdm
-import torch
-from sakura.ml import AsyncTrainer, DefaultTrainer
-from sakura.ml.decorators import test, train
+![sakura Logo](imgs/sakura.png)
+
+--------------------------------------------------------------------------------
+
+Sakura is a Python package that provides two high-level features:
+- A simple ML framework for asynchronous training.
+- An integration with PyTorch. 
 
 
-class Net(nn.Module):
-    def __init__(self):
-        super(Net, self).__init__()
-        self.conv1 = nn.Conv2d(1, 32, 3, 1)
-        self.conv2 = nn.Conv2d(32, 64, 3, 1)
-        self.dropout1 = nn.Dropout(0.25)
-        self.dropout2 = nn.Dropout(0.5)
-        self.fc1 = nn.Linear(9216, 128)
-        self.fc2 = nn.Linear(128, 10)
-
-    def forward(self, x):
-        x = self.conv1(x)
-        x = F.relu(x)
-        x = self.conv2(x)
-        x = F.relu(x)
-        x = F.max_pool2d(x, 2)
-        x = self.dropout1(x)
-        x = torch.flatten(x, 1)
-        x = self.fc1(x)
-        x = F.relu(x)
-        x = self.dropout2(x)
-        x = self.fc2(x)
-        output = F.log_softmax(x, dim=1)
-        return output
+You can reuse your favorite Python framework such as Pytorch, Tensorflow of PaddlePaddle.
 
 
+## Sakura modules
+
+At a granular level, sakura is a library that consists of the following components:
+
+| Component | Description |
+| ---- | --- |
+| **sakura** | Contains the sakuro modules. |
+| **sakura.ml** | Contains the code related to ml processing |
+| **sakura.decorators** | Decorators used to encapsulate the train/test.|
+
+## Installation
+
+### Docker
+To build the image with docker-compose
+```
+sh docker.sh
+```
+
+### Local
+```
+python setup.py install
+```
+## Code design
+If you worked with PyTorch in your project your would find a common structure. Simply change the `test` and `train` in your trainer as shown in the demo file. 
+```python
 class Trainer(DefaultTrainer):
-    def __init__(self,
-                 model,
-                 epochs,
-                 train_loader,
-                 test_loader,
-                 optimizer,
-                 scheduler,
-                 model_path="mnist_cnn.pt",
-                 checkpoint_path="mnist_cnn.ckpt.pt",
-                 *args,
-                 **kwargs):
-        super(Trainer, self).__init__(epochs,
-                                      optimizer,
-                                      scheduler,
-                                      model,
-                                      model_path,
-                                      checkpoint_path,
-                                      train_loader,
-                                      test_loader,
-                                      *args,
-                                      **kwargs)
-        self._model = model
-        self._epochs = epochs
-        self._train_loader = train_loader
-        self._test_loader = test_loader
-        self._optimizer = optimizer
-        self._scheduler = scheduler
-        self._model_path = model_path
-        self._checkpoint_path = checkpoint_path
-        self._avg_loss = []
-        self._correct = 0
-        self._loss = 0
-
+   ...
     @train
     def train(self):
         self._model.train()
@@ -87,7 +53,7 @@ class Trainer(DefaultTrainer):
             loss.backward()
             self._avg_loss.append(loss.item())
             self._optimizer.step()
-            pred = output.argmax(dim=1, keepdim=True)
+            pred = output.argmax(dim=1, keepdim=True) 
             self._correct += pred.eq(target.view_as(pred)).sum().item()
 
     @test
@@ -100,20 +66,37 @@ class Trainer(DefaultTrainer):
             for batch_idx, (data, target) in enumerate(self._test_loader):
                 data, target = data.to(self._device), target.to(self._device)
                 output = self._model(data)
-                self._loss += F.nll_loss(output, target, reduction='sum').item()
-                pred = output.argmax(dim=1, keepdim=True)
+                self._loss += F.nll_loss(output, target, reduction='sum').item()  
+                pred = output.argmax(dim=1, keepdim=True) 
                 self._correct += pred.eq(target.view_as(pred)).sum().item()
 
+```
 
 
+## Example of integration
+
+```python
 if __name__ == "__main__":
+    from __future__ import print_function
+    import argparse
+    import torch.nn as nn
+    import torch.nn.functional as F
+    import torch.optim as optim
+    from torchvision import datasets, transforms
+    from torch.optim.lr_scheduler import StepLR
+    from tqdm import tqdm
+    import torch
+    # sakura imports
+    from sakura.ml import AsyncTrainer, DefaultTrainer
+    from sakura.ml.decorators import test, train
+
     # Training settings
     parser = argparse.ArgumentParser(description='PyTorch MNIST Example')
     parser.add_argument('--batch-size', type=int, default=64, metavar='N',
                         help='input batch size for training (default: 64)')
     parser.add_argument('--test-batch-size', type=int, default=1000, metavar='N',
                         help='input batch size for testing (default: 1000)')
-    parser.add_argument('--epochs', type=int, default=10, metavar='N',
+    parser.add_argument('--epochs', type=int, default=14, metavar='N',
                         help='number of epochs to train (default: 14)')
     parser.add_argument('--lr', type=float, default=1.0, metavar='LR',
                         help='learning rate (default: 1.0)')
@@ -149,20 +132,23 @@ if __name__ == "__main__":
             transforms.ToTensor(),
             transforms.Normalize((0.1307,), (0.3081,))
         ])
-    dataset1, dataset2 = datasets.MNIST('data',
+    dataset1, dataset2 = datasets.MNIST('../data',
                                         train=True,
                                         download=True,
                                         transform=transform), \
-                         datasets.MNIST('data',
+                         datasets.MNIST('../data',
                                         train=False,
                                         transform=transform)
     train_loader, test_loader = torch.utils.data.DataLoader(dataset1,**train_kwargs), \
                                 torch.utils.data.DataLoader(dataset2, **test_kwargs)
     epochs = args.epochs
-    # Instantiate
+    
+    # Launch
     model = Net()
     optimizer = optim.Adadelta(model.parameters(), lr=args.lr)
     scheduler = StepLR(optimizer, step_size=1, gamma=args.gamma)
+    
+    # sakura    
     trainer = AsyncTrainer(cls=Trainer, device="cuda")
     trainer.run(model,
                 epochs,
@@ -173,3 +159,5 @@ if __name__ == "__main__":
                 "mnist_cnn.pt",
                 "mnist_cnn.ckpt.pt")
 
+
+```
