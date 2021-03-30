@@ -16,7 +16,7 @@ At a granular level, Sakura is a library that consists of the following componen
 
 | Component | Description |
 | ---- | --- |
-| **sakura** | Contains the sakuro modules. |
+| **sakura** | Contains the sakura modules. |
 | **sakura.ml** | Contains the code related to ml processing |
 | **sakura.decorators** | Decorators used to synchronize the train/test.|
 
