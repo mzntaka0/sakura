@@ -10,15 +10,15 @@ Sakura is a Python package that provides two high-level features:
 You can reuse your favorite Python packages such as NumPy, SciPy and Cython to extend sakura integration.
 
 
-## sakura modules
+## Sakura modules
 
 At a granular level, sakura is a library that consists of the following components:
 
 | Component | Description |
 | ---- | --- |
-| **sakura** | Contains the implementation of the caching sytem. |
+| **sakura** | Contains the sakuro modules. |
 | **sakura.ml** | Contains the code related to ml processing |
-| **sakura.decorators** | Pipeline to execute and store.|
+| **sakura.decorators** | Decorators used to encapsulate the train/test.|
 
 ## Installation
 
