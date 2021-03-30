@@ -7,7 +7,7 @@ Sakura is a simple but powerfull tool to reduce training time by running the tra
 - An integration with PyTorch. 
 
 
-You can reuse your favorite Python framework such as Pytorch, Tensorflow of PaddlePaddle.
+You can reuse your favorite Python framework such as Pytorch, Tensorflow or PaddlePaddle.
 
 
 ## Sakura modules
