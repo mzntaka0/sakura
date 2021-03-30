@@ -7,6 +7,11 @@ setup(
     short_description="Sakura provides asynchronous training for DNN.",
     long_description="Sakura provides asynchronous training for DNN.",
     url='https://zakuro.ai',
+    packages=[
+        "sakura",
+        "sakura.ml",
+        "sakura.ml.decorators",
+    ],
     license='ZakuroAI',
     author='ZakuroAI',
     python_requires='>=3.6',
