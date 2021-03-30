@@ -70,6 +70,7 @@ class Trainer(DefaultTrainer):
         self._avg_loss = []
         self._correct = 0
         self._loss = 0
+        self._epoch_start = 1
 
     @train
     def train(self):
@@ -104,6 +105,13 @@ class Trainer(DefaultTrainer):
                 pred = output.argmax(dim=1, keepdim=True)
                 self._correct += pred.eq(target.view_as(pred)).sum().item()
 
+    def run(self, *args, **kwargs):
+        for self._epoch in range(self._epoch_start, self._epochs):
+            if self._mode == "train":
+                self.train()
+                self.state.opt.scheduler.step()
+            else:
+                self.test()
 
 
 if __name__ == "__main__":
