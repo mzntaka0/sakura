@@ -2,9 +2,9 @@
 
 --------------------------------------------------------------------------------
 
-sakura is a Python package that provides two high-level features:
-- A simple decorator to identify the pure functions you want to cache.
-- A caching system that never repeat twice the same execution and return a cached result instead. 
+Sakura is a Python package that provides two high-level features:
+- A simple ML framework for asynchronous training.
+- An integration with PyTorch. 
 
 
 You can reuse your favorite Python packages such as NumPy, SciPy and Cython to extend sakura integration.
