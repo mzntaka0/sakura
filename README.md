@@ -64,8 +64,14 @@ class Trainer(DefaultTrainer):
 
 ## Installation
 ### Local
+using `setup.py`
 ```
 python setup.py install
+```
+
+using poetry
+```
+poetry install
 ```
 
 ### Pypi
